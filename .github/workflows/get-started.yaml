@@ -12,6 +12,8 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
+  ROLE_TO_ASSUME: arn:aws:iam::824709318323:role/GitHubAction-AssumeRoleWithAction
+  ROLE_SESSION_NAME: GitHub_to_AWS_via_FederatedOIDC
 
 # Permission can be added at job level or workflow level
 permissions:
@@ -27,13 +29,10 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::824709318323:role/GitHubAction-AssumeRoleWithAction
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+          role-session-name: ${{ env.ROLE_SESSION_NAME }}
           aws-region: ${{ env.AWS_REGION }}
       # Hello from AWS: WhoAmI
       - name: Sts GetCallerIdentity
         run: |
           aws sts get-caller-identity
-      - name: List AWS S3 Buckets
-        run: |
-          aws s3 ls
