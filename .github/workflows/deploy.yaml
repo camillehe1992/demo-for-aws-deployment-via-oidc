@@ -39,6 +39,7 @@ jobs:
         run: |
           aws sts get-caller-identity
       - name: Terraform init
+        working-directory: terraform
         run: |
           terraform init -reconfigure \
             -backend-config="bucket=$TF_BACKEND_S3_BUCKET" \
@@ -65,5 +66,6 @@ jobs:
       # Apply the pending changes
       - name: Terraform apply
         if: ${{ steps.tf-plan.outputs.exitcode == 2 }}
+        working-directory: terraform
         run: |
           terraform apply -auto-approve tfplan -no-color
