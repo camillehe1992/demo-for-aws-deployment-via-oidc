@@ -1,0 +1,71 @@
+# This is a basic workflow to help you get started with Actions
+name: Deploy Static Website
+
+# Controls when the action will run. Invokes the workflow on push events but only for the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ROLE_TO_ASSUME: ${{ vars.ROLE_TO_ASSUME }}
+  ROLE_SESSION_NAME: ${{ vars.ROLE_SESSION_NAME }}
+  TF_BACKEND_S3_BUCKET: ${{ vars.BACKEND_S3_BUCKET }}
+  ENVIRONMENT: prod
+  NICKNAME: ${{ ref.github_name }}
+
+# Permission can be added at job level or workflow level
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  Terraform-Plan-Apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+          role-session-name: ${{ env.ROLE_SESSION_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
+      - name: Terraform init
+        run: |
+          terraform init -reconfigure \
+            -backend-config="bucket=$TF_BACKEND_S3_BUCKET" \
+            -backend-config="region=$AWS_REGION" \
+            -backend-config="key=$NICKNAME/prod/$AWS_REGION/terraform.tfstate"
+      # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
+      - name: Terraform plan
+        id: tf-plan
+        working-directory: terraform
+        run: |
+          export exitcode=0
+
+          terraform plan \
+            -var-file=${{ env.ENVIRONMENT }}.tfvars \
+            -var aws_region=$AWS_REGION \ 
+            -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+
+          if [ $exitcode -eq 1 ]; then
+            echo Terraform Plan Failed!
+            exit 1
+          else
+            exit 0
+          fi
+      # Apply the pending changes
+      - name: Terraform apply
+        if: ${{ steps.tf-plan.outputs.exitcode == 2 }}
+        run: |
+          terraform apply -auto-approve tfplan -no-color
