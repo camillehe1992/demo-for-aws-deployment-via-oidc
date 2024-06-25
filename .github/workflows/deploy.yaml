@@ -16,7 +16,7 @@ env:
   ROLE_SESSION_NAME: ${{ vars.ROLE_SESSION_NAME }}
   TF_BACKEND_S3_BUCKET: ${{ vars.BACKEND_S3_BUCKET }}
   ENVIRONMENT: prod
-  NICKNAME: ${{ ref.github_name }}
+  NICKNAME: demo-for-aws-deployment-via-oidc
 
 # Permission can be added at job level or workflow level
 permissions:
