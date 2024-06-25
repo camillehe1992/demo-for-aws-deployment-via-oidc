@@ -52,9 +52,7 @@ jobs:
           export exitcode=0
 
           terraform plan \
-            -var-file=${{ env.ENVIRONMENT }}.tfvars \
-            -var aws_region=$AWS_REGION \ 
-            -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+            -var-file=$ENVIRONMENT.tfvars -detailed-exitcode -no-color -out tfplan || export exitcode=$?
 
           echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
 
