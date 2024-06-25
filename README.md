@@ -1,6 +1,6 @@
 # Deploy Terraform resources to AWS using GitHub Actions via OIDC
 
-The repo is used for demonstrating the setup that deploy AWS resources using Actions via OIDC.
+The repo is used for demonstrating the setup that deploy AWS resources using GitHub Actions workflow via OIDC.
 
 ## Prerequisites
 
