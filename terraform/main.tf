@@ -71,7 +71,7 @@ resource "null_resource" "dist" {
   }
 
   provisioner "local-exec" {
-    command = "cd ${pwd} && rm -r dist/* && cp *.html dist/"
+    command = "cd ${pwd} && rm -r ${var.website_root} && mkdir ${var.website_root} && cp *.html ${var.website_root}/"
   }
 }
 
