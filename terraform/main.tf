@@ -75,10 +75,18 @@ resource "null_resource" "dist" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file
+resource "local_file" "dist" {
+  depends_on = [ null_resource.dist ]
+  for_each = local.website_files
+
+  filename = "${var.website_root}/${each.value}"
+}
+
 # https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
 resource "aws_s3_object" "dist" {
-  depends_on = [ null_resource.dist ]
-  for_each = fileset(var.website_root, "**")
+  depends_on = [ local_file.dist ]
+  for_each = local.website_files
 
   bucket = aws_s3_bucket.this.id
   key    = each.value
