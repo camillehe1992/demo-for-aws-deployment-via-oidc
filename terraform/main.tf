@@ -84,15 +84,15 @@ data "local_file" "dist_files" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
-# resource "aws_s3_object" "content" {
-#   depends_on = [ data.local_file.dist ]
-#   for_each = local.website_files
+resource "aws_s3_object" "dist_files" {
+  # depends_on = [ data.local_file.dist ]
+  for_each = local.website_files
 
-#   bucket = aws_s3_bucket.this.id
-#   key    = each.value
-#   source      = "${var.website_root}/${each.key}"
-#   source_hash = filemd5("${var.website_root}/${each.key}")
-#   content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
+  bucket = aws_s3_bucket.this.id
+  key    = each.value
+  source      = "${var.website_root}/${each.key}"
+  source_hash = filemd5("${var.website_root}/${each.key}")
+  content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
