@@ -24,5 +24,5 @@ variable "static_bucket_name" {
 variable "website_root" {
   type = string
   description = "Path to the root of website content"
-  default     = "dist"
+  default     = "public"
 }
