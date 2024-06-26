@@ -3,5 +3,5 @@ output "website_endpoint" {
 }
 
 output "dist_files" {
-  value = data.local_file.dist_files.filename
+  value = data.local_file.dist_files[each.key].filename
 }
