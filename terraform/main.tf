@@ -88,10 +88,12 @@ resource "aws_s3_bucket_policy" "this" {
 resource "aws_s3_object" "dist_files" {
   for_each = fileset(var.website_root, "**")
 
-  bucket       = aws_s3_bucket.this.id
-  key          = each.value
-  source       = "${var.website_root}/${each.key}"
-  source_hash  = filemd5("${var.website_root}/${each.key}")
+  bucket = aws_s3_bucket.this.id
+  key    = each.value
+  source = "${var.website_root}/${each.key}"
+  # source_hash = filemd5("${var.website_root}/${each.key}")
+
+  etag         = filemd5("${var.website_root}/${each.key}")
   content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
 
   tags = var.tags
