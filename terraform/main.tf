@@ -77,17 +77,16 @@ resource "aws_s3_bucket_policy" "this" {
 # }
 
 # https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file
-data "local_file" "dist_files" {
-  # depends_on = [ null_resource.dist_files ]
-  for_each = fileset(var.website_root, "**")
+# data "local_file" "dist_files" {
+#   # depends_on = [ null_resource.dist_files ]
+#   for_each = fileset(var.website_root, "**")
 
-  filename = "${var.website_root}/${each.value}"
-}
+#   filename = "${var.website_root}/${each.value}"
+# }
 
 # https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
 resource "aws_s3_object" "dist_files" {
-  depends_on = [data.local_file.dist_files]
-  for_each   = fileset(var.website_root, "**")
+  for_each = fileset(var.website_root, "**")
 
   bucket       = aws_s3_bucket.this.id
   key          = each.value

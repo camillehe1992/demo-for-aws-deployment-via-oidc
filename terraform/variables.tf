@@ -2,7 +2,7 @@
 variable "aws_region" {
   type        = string
   description = "AWS region"
-  default = "ap-southeast-1"
+  default     = "ap-southeast-1"
 }
 
 variable "environment" {
@@ -22,7 +22,7 @@ variable "static_bucket_name" {
 }
 
 variable "website_root" {
-  type = string
+  type        = string
   description = "Path to the root of website content"
-  default     = "public"
+  default     = "../public"
 }
