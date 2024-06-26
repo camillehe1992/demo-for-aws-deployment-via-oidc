@@ -63,3 +63,28 @@ resource "aws_s3_bucket_policy" "this" {
     ]
   })
 }
+
+# https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource
+resource "null_resource" "dist" {
+  triggers = {
+    timestamp  = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "cd ${pwd} && rm -r dist/* && cp *.html dist/"
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
+resource "aws_s3_object" "dist" {
+  depends_on = [ null_resource.dist ]
+  for_each = fileset(var.website_root, "**")
+
+  bucket = aws_s3_bucket.this.id
+  key    = each.value
+  source      = "${var.website_root}/${each.key}"
+  source_hash = filemd5("${var.website_root}/${each.key}")
+  content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
+
+  tags = var.tags
+}

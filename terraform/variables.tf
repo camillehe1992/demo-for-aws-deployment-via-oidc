@@ -1,8 +1,8 @@
 # General Deployment Variables
 variable "aws_region" {
   type        = string
-  default = "ap-southeast-1"
   description = "AWS region"
+  default = "ap-southeast-1"
 }
 
 variable "environment" {
@@ -19,4 +19,10 @@ variable "tags" {
 variable "static_bucket_name" {
   type        = string
   description = "The name of S3 bucket for static website hosting"
+}
+
+variable "website_root" {
+  type = string
+  description = "Path to the root of website content"
+  default     = "../dist"
 }
