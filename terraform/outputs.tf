@@ -6,6 +6,6 @@ output "website_files" {
   value = local.website_files
 }
 
-output "dist_files" {
-  value = values(data.local_file.dist_files.*.id)
-}
+# output "dist_files" {
+#   value = values(data.local_file.dist_files.*.id)
+# }
