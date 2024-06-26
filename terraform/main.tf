@@ -65,34 +65,34 @@ resource "aws_s3_bucket_policy" "this" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource
-# resource "null_resource" "dist" {
-#   triggers = {
-#     timestamp  = timestamp()
-#   }
+resource "null_resource" "dist_files" {
+  triggers = {
+    timestamp  = timestamp()
+  }
 
-#   provisioner "local-exec" {
-#     command = "rm -rf ${var.website_root} && mkdir ${var.website_root} && cp ../*.html ${var.website_root} && ls ${var.website_root}"
-#   }
-# }
+  provisioner "local-exec" {
+    command = "rm -rf ${var.website_root} && mkdir ${var.website_root} && cp ../*.html ${var.website_root} && ls -la ${var.website_root}"
+  }
+}
 
 # https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file
-# data "local_file" "dist" {
-#   # depends_on = [ null_resource.dist ]
-#   for_each = local.website_files
-
-#   filename = "${var.website_root}/${each.value}"
-# }
-
-# https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
-resource "aws_s3_object" "content" {
-  # depends_on = [ data.local_file.dist ]
+data "local_file" "dist_files" {
+  depends_on = [ null_resource.dist_files ]
   for_each = local.website_files
 
-  bucket = aws_s3_bucket.this.id
-  key    = each.value
-  source      = "${var.website_root}/${each.key}"
-  source_hash = filemd5("${var.website_root}/${each.key}")
-  content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
-
-  tags = var.tags
+  filename = "${var.website_root}/${each.value}"
 }
+
+# https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
+# resource "aws_s3_object" "content" {
+#   depends_on = [ data.local_file.dist ]
+#   for_each = local.website_files
+
+#   bucket = aws_s3_bucket.this.id
+#   key    = each.value
+#   source      = "${var.website_root}/${each.key}"
+#   source_hash = filemd5("${var.website_root}/${each.key}")
+#   content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
+
+#   tags = var.tags
+# }
