@@ -64,36 +64,14 @@ resource "aws_s3_bucket_policy" "this" {
   })
 }
 
-# https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource
-# resource "null_resource" "dist_files" {
-#   triggers = {
-#     timestamp  = timestamp()
-#   }
-
-#   provisioner "local-exec" {
-#     command = "pwd && rm -rf ${var.website_root} && mkdir ${var.website_root} && cp ../*.html ${var.website_root} && ls -la ${var.website_root}"
-#     working_dir = "../"
-#   }
-# }
-
-# https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file
-# data "local_file" "dist_files" {
-#   # depends_on = [ null_resource.dist_files ]
-#   for_each = fileset(var.website_root, "**")
-
-#   filename = "${var.website_root}/${each.value}"
-# }
-
 # https://registry.terraform.io/providers/hashicorp/aws/5.0.0/docs/resources/s3_object
 resource "aws_s3_object" "dist_files" {
-  for_each = fileset(var.website_root, "**")
+  for_each = fileset(var.website_static_dir, "**")
 
-  bucket = aws_s3_bucket.this.id
-  key    = each.value
-  source = "${var.website_root}/${each.key}"
-  # source_hash = filemd5("${var.website_root}/${each.key}")
-
-  etag         = filemd5("${var.website_root}/${each.key}")
+  bucket       = aws_s3_bucket.this.id
+  key          = each.value
+  source       = "${var.website_static_dir}/${each.key}"
+  source_hash  = filemd5("${var.website_static_dir}/${each.key}")
   content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.key), null)
 
   tags = var.tags

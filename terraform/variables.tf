@@ -21,8 +21,8 @@ variable "static_bucket_name" {
   description = "The name of S3 bucket for static website hosting"
 }
 
-variable "website_root" {
+variable "website_static_dir" {
   type        = string
-  description = "Path to the root of website content"
+  description = "Path to the root directory of website static content"
   default     = "../public"
 }
