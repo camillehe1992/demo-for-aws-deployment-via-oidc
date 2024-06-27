@@ -14,7 +14,7 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   ROLE_TO_ASSUME: ${{ vars.ROLE_TO_ASSUME }}
   ROLE_SESSION_NAME: ${{ vars.ROLE_SESSION_NAME }}
-  TF_BACKEND_S3_BUCKET: ${{ vars.BACKEND_S3_BUCKET }}
+  TF_BACKEND_S3_BUCKET: ${{ vars.TF_BACKEND_S3_BUCKET }}
   ENVIRONMENT: prod
   NICKNAME: demo-for-aws-deployment-via-oidc
 

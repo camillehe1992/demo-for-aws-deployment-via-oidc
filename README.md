@@ -2,6 +2,11 @@
 
 The repo is used for demonstrating the setup that deploy AWS resources using GitHub Actions workflow via OIDC.
 
+See the details from below blogs:
+[Deploy Terraform resources to AWS using GitHub Actions via OIDC](https://dev.to/camillehe1992/deploy-terraform-resources-to-aws-using-github-actions-via-oidc-3b9g)
+
+[AWS S3 Bucket Website Hosting using Terraform](https://dev.to/camillehe1992/aws-s3-bucket-website-hosting-using-terraform-4fk5)
+
 ## Prerequisites
 
 - An AWS account with permission to create OIDC identity provider, role, attach policy in AWS IAM service.
